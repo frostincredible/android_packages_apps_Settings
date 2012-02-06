@@ -52,7 +52,7 @@ public class PowerWidgetUtil {
     public static final String BUTTON_MEDIA_PREVIOUS = "toggleMediaPrevious";
     public static final String BUTTON_MEDIA_NEXT = "toggleMediaNext";
     public static final String BUTTON_WIMAX = "toggleWimax";
-    public static final String BUTTON_LTE = "toggleLTE";
+    public static final String BUTTON_LTE = "toggleLte";
 
     public static final HashMap<String, ButtonInfo> BUTTONS = new HashMap<String, ButtonInfo>();
     static {
@@ -121,7 +121,8 @@ public class PowerWidgetUtil {
     private static final String BUTTONS_DEFAULT = BUTTON_WIFI
             + BUTTON_DELIMITER + BUTTON_BLUETOOTH
             + BUTTON_DELIMITER + BUTTON_GPS
-            + BUTTON_DELIMITER + BUTTON_SOUND;
+            + BUTTON_DELIMITER + BUTTON_SOUND
+            + BUTTON_DELIMITER + BUTTON_LTE;
 
     public static String getCurrentButtons(Context context) {
         String buttons = Settings.System.getString(context.getContentResolver(),
