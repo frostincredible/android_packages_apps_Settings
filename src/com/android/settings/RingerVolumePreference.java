@@ -145,6 +145,13 @@ public class RingerVolumePreference extends VolumePreference {
 
         mAudioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
     }
+    
+    private static int getCurrentMutableStreams(Context c) {
+        final int defaultMuteStreams = ((1 << AudioSystem.STREAM_RING)|(1 << AudioSystem.STREAM_NOTIFICATION)|
+                (1 << AudioSystem.STREAM_SYSTEM)|(1 << AudioSystem.STREAM_SYSTEM_ENFORCED));
+        return Settings.System.getInt(c.getContentResolver(),
+                Settings.System.MODE_RINGER_STREAMS_AFFECTED, defaultMuteStreams);
+    }
 
     @Override
     protected void onBindDialogView(View view) {
@@ -175,9 +182,36 @@ public class RingerVolumePreference extends VolumePreference {
 
         final View ringerSection = view.findViewById(R.id.ringer_section);
         final View notificationSection = view.findViewById(R.id.notification_section);
-        final TextView ringerDesc = (TextView) ringerSection.findViewById(R.id.ringer_description_text);
+
+        final TextView ringerDesc = (TextView) ringerSection
+                .findViewById(R.id.ringer_description_text);
 
         if (Utils.isVoiceCapable(getContext())) {
+            if ((getCurrentMutableStreams(getContext()) & AudioSystem.STREAM_NOTIFICATION) != 0) {
+                linkMuteStates.setChecked(true);
+            } else {
+                linkMuteStates.setChecked(false);
+            }
+
+            linkMuteStates.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                    int mutedStreams = getCurrentMutableStreams(getContext());
+
+                    if (isChecked) {
+                        mutedStreams |= (1 << AudioSystem.STREAM_NOTIFICATION);
+                    } else {
+                        mutedStreams &= ~(1 << AudioSystem.STREAM_NOTIFICATION);
+                    }
+                    Settings.System
+                    .putInt(buttonView.getContext().getContentResolver(),
+                            Settings.System.MODE_RINGER_STREAMS_AFFECTED,
+                            mutedStreams);
+                }
+            });
+
             if (System.getInt(getContext().getContentResolver(),
                     System.VOLUME_LINK_NOTIFICATION, 1) == 1) {
                 linkCheckBox.setChecked(true);
