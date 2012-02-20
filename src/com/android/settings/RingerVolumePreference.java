@@ -153,6 +153,13 @@ public class RingerVolumePreference extends VolumePreference {
                 Settings.System.MODE_RINGER_STREAMS_AFFECTED, defaultMuteStreams);
     }
 
+    private static int getCurrentMutableStreams(Context c) {
+        final int defaultMuteStreams = ((1 << AudioSystem.STREAM_RING)|(1 << AudioSystem.STREAM_NOTIFICATION)|
+                (1 << AudioSystem.STREAM_SYSTEM)|(1 << AudioSystem.STREAM_SYSTEM_ENFORCED));
+        return Settings.System.getInt(c.getContentResolver(),
+                Settings.System.MODE_RINGER_STREAMS_AFFECTED, defaultMuteStreams);
+    }
+
     @Override
     protected void onBindDialogView(View view) {
         super.onBindDialogView(view);
